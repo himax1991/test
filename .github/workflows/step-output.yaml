@@ -12,12 +12,10 @@ jobs:
       - name: set output
         id: set-output
         shell: bash
-        run: |
-          echo "age=23" >> $GITHUB_OUTPUT
+        run: echo "age=23" >> $GITHUB_OUTPUT
 
       - name: get output
-        run: |
-          echo "${{ steps.set-output.age }}"
+        run: echo ${{ steps.set-output.outputs.age }}
           
     
     

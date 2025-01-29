@@ -1,9 +1,7 @@
 name: Job output
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:        
 
 jobs:
   job1:

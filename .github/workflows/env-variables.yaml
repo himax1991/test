@@ -15,7 +15,7 @@ on:
         type: string
 
 env:
-  PRINT: param #${{ inputs.job3_param1 }}
+  PRINT: ${{ inputs.job3_param1 }}
 
 
 jobs:
@@ -28,4 +28,4 @@ jobs:
         run: echo "Hello user! Peace :)"
       
       - name: print_parameter
-        run: echo "Your input parameter value:"
+        run: echo "$PRINT"

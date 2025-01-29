@@ -1,0 +1,23 @@
+name: Step output
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set output
+        id: set-output
+        shell: bash
+        run: |
+          echo "greeting_message='Hello world'" >> $GITHUB_OUTPUT
+
+      - name: get output
+        run: |
+          echo "${{ steps.set-output.greeting_message }}"
+          
+    
+    

@@ -29,6 +29,6 @@ jobs:
           echo "Hello user! Your job3 run condition: ${{ inputs.run_job3 }}"
       
       - name: print_parameter
-        if: ${{ inputs.run_job3 }} == "true"
+        if: ${{ inputs.run_job3 }} == true
         run: |
           echo "Your parameter is: $PRINT"

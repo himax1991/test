@@ -1,0 +1,31 @@
+name: Env variables testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_job3:
+        description: 'Choose whether job3 should be run'
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      job3_param1:
+        description: 'Pass argument to job3'
+        type: string
+
+env:
+  PRINT: ${{ inputs.job3_param1 }}
+
+
+jobs:
+  print_parameter:
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - hello_step:
+        run: "Hello user! Peace :)"
+      
+      - print_parameter:
+        run: "Your input parameter value: $PRINT"

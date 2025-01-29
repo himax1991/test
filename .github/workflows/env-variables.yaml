@@ -25,7 +25,7 @@ jobs:
     steps:
       
       - name: hello_step
-        run: "Hello user! Peace :)"
+        run: echo "Hello user! Peace :)"
       
       - name: print_parameter
         run: "Your input parameter value: $PRINT"

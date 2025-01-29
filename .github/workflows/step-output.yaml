@@ -16,7 +16,8 @@ jobs:
           echo "greeting_message=Hello world!" >> $GITHUB_OUTPUT
 
       - name: get output
-        run: echo ${{ steps.set-output.outputs.greeting_message }}
+        run: |
+          echo "${{ steps.set-output.outputs.greeting_message }}"
           
     
     

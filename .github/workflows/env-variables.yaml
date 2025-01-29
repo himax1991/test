@@ -1,4 +1,4 @@
-name: Env variables testing
+{ inputs.job3_param1 }}name: Env variables testing
 
 on:
   workflow_dispatch:
@@ -24,8 +24,8 @@ jobs:
 
     steps:
       
-      - hello_step:
+      - name: hello_step
         run: "Hello user! Peace :)"
       
-      - print_parameter:
+      - name: print_parameter
         run: "Your input parameter value: $PRINT"

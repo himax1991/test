@@ -1,4 +1,4 @@
-{ inputs.job3_param1 }}name: Env variables testing
+name: Env variables testing
 
 on:
   workflow_dispatch:

@@ -25,7 +25,8 @@ jobs:
     steps:
       
       - name: hello_step
-        run: echo "Hello user! Peace :)"
+        run: |
+          echo "Hello user! Your job3 run condition: ${{ inputs.run_job3 }}"
       
       - name: print_parameter
         if: ${{ inputs.run_job3 }} == "true"

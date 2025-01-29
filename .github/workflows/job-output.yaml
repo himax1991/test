@@ -1,0 +1,18 @@
+name: Job output
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: set output
+        id: set-output
+        run: echo "name=himax" >> $GITHUB_OUTPUT
+        
+      - name: access output
+        run: echo ${{ steps.set-output.outputs.name }}

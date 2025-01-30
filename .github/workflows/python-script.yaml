@@ -12,7 +12,10 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - name: init step
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Check runner fs structure
         run: |
-          echo "Init step"
-          ls -lah
+          echo "Current dir" && pwd
+          echo "Check files" && ls -lah

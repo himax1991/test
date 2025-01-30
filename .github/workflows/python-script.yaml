@@ -8,8 +8,11 @@ on:
       - feature/python-script
 
 jobs:
-  
-  - name: Init job
-    run: |
-      echo "Starting init job"
-      ls -lah
+
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: init step
+        run: |
+          echo "Init step"
+          ls -lah

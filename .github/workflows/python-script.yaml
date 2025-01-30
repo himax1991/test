@@ -1,0 +1,15 @@
+name: Python script testing
+
+
+on:
+  # workflow_dispatch
+  push:
+    branches:
+      - feature/python-script
+
+jobs:
+  
+  - name: Init job
+    run: |
+      echo "Starting init job"
+      ls -lah

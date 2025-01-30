@@ -19,3 +19,14 @@ jobs:
         run: |
           echo "Current dir" && pwd
           echo "Check files" && ls -lah
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect release versions
+        run: python collect-released-versions.py

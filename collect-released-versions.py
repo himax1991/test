@@ -30,7 +30,7 @@ for channel in channels.keys():
         for job in jobs:
             if ('Enable' in job['name']) and (job['conclusion'] == 'success'):
                 editions[job['name'].split()[1]] = version
-        if editions['FE'] and (list(editions.values())[:-1] == list(editions.values())[1:]):
+        if list(editions.values())[:-1] == list(editions.values())[1:]:
             break
     channels[channel] = editions['FE']
 

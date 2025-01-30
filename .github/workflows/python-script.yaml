@@ -28,5 +28,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Prepare files for collecting and deployment
+        run: |
+          mkdir -p ci/.helm/
+          echo -e "project: deckhouse-channels\nconfigVersion: 1" | tee ci/.helm/werf.yaml
+          ls -la ci/.helm/
+
       - name: Collect release versions
         run: python collect-released-versions.py

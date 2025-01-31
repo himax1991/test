@@ -2,10 +2,11 @@ name: Python script testing
 
 
 on:
-  # workflow_dispatch
+  workflow_dispatch
   push:
     branches:
       - feature/python-script
+  
 
 env:
   WERF_CHANNEL: "ea"

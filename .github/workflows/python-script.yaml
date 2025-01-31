@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # - name: Check runner fs structure
       #   run: |
@@ -54,8 +56,11 @@ jobs:
       # - name: Print channels.yaml
       #   run: cat ci/.helm/channels.yaml
 
+      - name: Install werf CLI  
+        uses: werf/actions/install@v2
+
       - name: Converge
-        uses: werf/actions/converge@v1.2
+        uses: werf/actions/converge@v2
         with:
           channel: ${{env.WERF_CHANNEL}}
           kube-config-base64-data: "${{ secrets.KUBE_CONFIG_BASE64_DATA }}"

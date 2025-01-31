@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - feature/python-script
+  workflow_dispatch:
   
 
 env:

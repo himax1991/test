@@ -2,7 +2,6 @@ name: Python script testing
 
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - feature/python-script
@@ -21,41 +20,41 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name: Check runner fs structure
-      #   run: |
-      #     echo "Current dir" && pwd
-      #     echo "Check files" && ls -lah
+      - name: Check runner fs structure
+        run: |
+          echo "Current dir" && pwd
+          echo "Check files" && ls -lah
 
-      # - name: Setup Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.12.3'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
 
-      # - name: Install dependencies
-      #   run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      # - name: Prepare files for collecting and deployment
-      #   run: |
-      #     mkdir -p ci/.helm/templates
-      #     echo -e "project: deckhouse-channels\nconfigVersion: 1" | tee werf.yaml ci/werf.yaml
-      #     echo "Print content of ci/werf.yaml" && cat ci/werf.yaml
-      #     tee ci/.helm/templates/configmap.yaml << EOF
-      #     apiVersion: v1
-      #     kind: ConfigMap
-      #     metadata:
-      #       name: release-channels-data
-      #     data:
-      #       channels.yaml: |
-      #     {{ $.Files.Get "channels.yaml" | indent 4 }}
-      #     EOF
+      - name: Prepare files for collecting and deployment
+        run: |
+          mkdir -p ci/.helm/templates
+          echo -e "project: deckhouse-channels\nconfigVersion: 1" | tee werf.yaml ci/werf.yaml
+          echo "Print content of ci/werf.yaml" && cat ci/werf.yaml
+          tee ci/.helm/templates/configmap.yaml << EOF
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: release-channels-data
+          data:
+            channels.yaml: |
+          {{ $.Files.Get "channels.yaml" | indent 4 }}
+          EOF
 
-      #     echo "Print content of ci/.helm/templates/configmap.yaml" && cat ci/.helm/templates/configmap.yaml
+          echo "Print content of ci/.helm/templates/configmap.yaml" && cat ci/.helm/templates/configmap.yaml
 
-      # - name: Collect release versions
-      #   run: python collect-released-versions.py
+      - name: Collect release versions
+        run: python collect-released-versions.py
 
-      # - name: Print channels.yaml
-      #   run: cat ci/.helm/channels.yaml
+      - name: Print channels.yaml
+        run: cat ci/.helm/channels.yaml
 
       - name: Install werf CLI  
         uses: werf/actions/install@v2
@@ -69,3 +68,4 @@ jobs:
         env:
           WERF_NAMESPACE: "deckhouse-web-dev"
           WERF_DIR: "ci"
+          WERF_DEV: "true"

@@ -57,4 +57,5 @@ groups:
       version: {rock-solid}
 '''.format(**data)
 
-print(yamldata)
+with open('ci/.helm/channels.yaml','w') as channels_file:
+    channels_file.write(yamldata)

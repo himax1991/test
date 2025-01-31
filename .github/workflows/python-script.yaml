@@ -63,7 +63,7 @@ jobs:
         uses: werf/actions/converge@v2
         with:
           channel: ${{env.WERF_CHANNEL}}
-          kube-config-base64-data: "${{ secrets.KUBE_CONFIG_BASE64_DATA }}"
+          kube-config-base64-data: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
           env: dev
         env:
           WERF_NAMESPACE: "deckhouse-web-dev"

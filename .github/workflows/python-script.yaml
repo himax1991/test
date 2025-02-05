@@ -62,10 +62,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: channels-artifact
-          path: |
-            ci
-            ci/.helm
-            ci/.helm/templates
+          path: ci
+          include-hidden-files: true
 
   # job2:
   #   name: Deploy channel releases

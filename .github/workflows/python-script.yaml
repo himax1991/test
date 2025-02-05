@@ -76,20 +76,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: channels-artifact
+          path: channel-releases
 
       - name: Check runner's file structure
         run: ls -1RA
 
-      # - name: Install werf CLI  
-      #   uses: werf/actions/install@v2
+      - name: Install werf CLI  
+        uses: werf/actions/install@v2
 
-      # - name: Converge
-      #   uses: werf/actions/converge@v2
-      #   with:
-      #     channel: ${{env.WERF_CHANNEL}}
-      #     kube-config-base64-data: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
-      #     env: dev
-      #   env:
-      #     WERF_NAMESPACE: "deckhouse-web-dev"
-      #     WERF_DIR: "ci"
-      #     WERF_DEV: "true"
+      - name: Converge
+        uses: werf/actions/converge@v2
+        with:
+          channel: ${{env.WERF_CHANNEL}}
+          kube-config-base64-data: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
+          env: dev
+        env:
+          WERF_NAMESPACE: "deckhouse-web-dev"
+          WERF_DIR: "channel-releases"
+          WERF_DEV: "true"

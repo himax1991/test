@@ -50,7 +50,10 @@ jobs:
           {{ $.Files.Get "channels.yaml" | indent 4 }}
           EOF
 
-          echo "Print content of ci/.helm/templates/configmap.yaml" && cat ci/.helm/templates/configmap.yaml
+          echo "Print file structure of ci directory:"
+          ls -1R
+          echo "Print content of ci/.helm/templates/configmap.yaml"
+          cat ci/.helm/templates/configmap.yaml
       
       - name: Collect release versions
         run: python collect-released-versions.py

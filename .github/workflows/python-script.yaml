@@ -59,7 +59,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: channels-artifact
-          path: ci/*
+          path: |
+            ci
+            ci/.helm
+            ci/.helm/templates
 
   # job2:
   #   name: Deploy channel releases

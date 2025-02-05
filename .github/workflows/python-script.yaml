@@ -64,7 +64,9 @@ jobs:
   job2:
     name: Deploy channel releases
     runs-on: ubuntu-latest
-      steps:
+    needs: job1
+      
+    steps:
 
       - name: Download channels artifact
         uses: actions/download-artifact@v4

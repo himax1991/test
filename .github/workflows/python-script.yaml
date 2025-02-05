@@ -65,28 +65,31 @@ jobs:
           path: ci
           include-hidden-files: true
 
-  # job2:
-  #   name: Deploy channel releases
-  #   runs-on: ubuntu-latest
-  #   needs: job1
+  job2:
+    name: Deploy channel releases
+    runs-on: ubuntu-latest
+    needs: job1
       
-  #   steps:
+    steps:
 
-  #     - name: Download channels artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: channels-artifact
+      - name: Download channels artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: channels-artifact
 
-  #     - name: Install werf CLI  
-  #       uses: werf/actions/install@v2
+      - name: Check runner's file structure
+        run: ls -1RA
 
-  #     - name: Converge
-  #       uses: werf/actions/converge@v2
-  #       with:
-  #         channel: ${{env.WERF_CHANNEL}}
-  #         kube-config-base64-data: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
-  #         env: dev
-  #       env:
-  #         WERF_NAMESPACE: "deckhouse-web-dev"
-  #         WERF_DIR: "ci"
-  #         WERF_DEV: "true"
+      # - name: Install werf CLI  
+      #   uses: werf/actions/install@v2
+
+      # - name: Converge
+      #   uses: werf/actions/converge@v2
+      #   with:
+      #     channel: ${{env.WERF_CHANNEL}}
+      #     kube-config-base64-data: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
+      #     env: dev
+      #   env:
+      #     WERF_NAMESPACE: "deckhouse-web-dev"
+      #     WERF_DIR: "ci"
+      #     WERF_DEV: "true"

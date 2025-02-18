@@ -2,16 +2,20 @@
 
 from ghapi.all import *
 from pprint import pprint
+from time import sleep
 import json
+import os
 
-github = GhApi(owner='deckhouse', repo='deckhouse')
+gh_token=os.getenv('GITHUB_TOKEN')
+
+github = GhApi(owner='deckhouse', repo='deckhouse', token=gh_token)
 
 channels = {
-    'alpha': None,
-    'beta': None,
-    'early-access': None,
-    'stable': None,
-    'rock-solid': None
+    # 'alpha': None,
+    # 'beta': None,
+    # 'early-access': None,
+    'stable': None
+    # 'rock-solid': None
 }
 
 
@@ -19,6 +23,7 @@ for channel in channels.keys():
     editions = {
         'FE': None,
         'SE': None,
+        'SE-plus': None,
         'EE': None,
         'CE': None,
         'BE': None,
@@ -27,10 +32,13 @@ for channel in channels.keys():
     for run in workflow_runs:
         version = run['head_branch']
         jobs = github.actions.list_jobs_for_workflow_run(run['id'])['jobs']
+        # if ('stable' in run['name']):
+        #   print(f'Workflow run name: {run['name']}, version: {version}')
+        #   sleep(0.3)
         for job in jobs:
             if ('Enable' in job['name']) and (job['conclusion'] == 'success'):
                 editions[job['name'].split()[1]] = version
-        if list(editions.values())[:-1] == list(editions.values())[1:]:
+        if editions['FE'] and (list(editions.values())[:-1] == list(editions.values())[1:]):
             break
     channels[channel] = editions['FE']
 
@@ -58,5 +66,5 @@ groups:
 '''.format(**data)
 
 print(yamldata)
-with open('ci/.helm/channels.yaml','w') as channels_file:
-    channels_file.write(yamldata)
+# with open('ci/.helm/channels.yaml','w') as channels_file:
+#     channels_file.write(yamldata)

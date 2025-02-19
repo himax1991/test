@@ -107,9 +107,8 @@ jobs:
     needs: job1
     permissions:
       contents: write
-      
-    steps:
 
+    steps:
       - name: Make latest stable release
         env:
           STABLE_VERSION: ${{ needs.job1.outputs.STABLE_VERSION }}

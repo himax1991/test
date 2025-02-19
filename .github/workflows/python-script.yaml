@@ -57,6 +57,8 @@ jobs:
       
       - name: Collect release versions
         run: python collect-released-versions.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

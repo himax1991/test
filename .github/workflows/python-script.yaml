@@ -157,4 +157,4 @@ jobs:
               exit 1
           fi
 
-          echo -e "\e[32mRelease \"${release_name}\" has been successfully marked as latest."
+          echo -e "\e[32mRelease ${release_name} has been successfully marked as latest."

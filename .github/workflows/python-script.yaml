@@ -105,11 +105,11 @@ jobs:
     name: Update 
     runs-on: ubuntu-latest
     needs: job1
+    permissions:
+      contents: write    
     steps:
 
       - name: Make latest stable release
-        permissions:
-          contents: write
         env:
           STABLE_VERSION: ${{ needs.job1.outputs.STABLE_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

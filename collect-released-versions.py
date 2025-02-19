@@ -97,7 +97,7 @@ with open('ci/.helm/channels.yaml','w') as channels_file:
     # yaml.dump(result_channels,channels_file)
 
 with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
-    output.write(f'stable_version={stable_version}')
+    output.write(f'stable_version={stable_version}\n')
 
 # github = GhApi(owner='himax1991', repo='test', token=gh_token)
 # release = github.repos.get_release_by_tag(owner=gh_owner, repo=gh_repo, tag=stable_version)

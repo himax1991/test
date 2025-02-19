@@ -130,6 +130,7 @@ jobs:
 
           if [[ $response_code != '200' ]]; then
               echo -e "\e[31mERROR: Unable to determinate release id by tag!\e[0m"
+              echo -e "\e[31mURL: ${release_by_tag}!\e[0m"
               exit 1
           fi
 
@@ -147,6 +148,7 @@ jobs:
 
           if [[ $response_code != '200' ]]; then
               echo -e "\e[31mERROR: Unable to update release ${release_name}!\e[0m"
+              echo -e "\e[31mURL: ${update_release}!\e[0m"
               exit 1
           fi
 

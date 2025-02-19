@@ -110,6 +110,7 @@ jobs:
       - name: Make latest stable release
         env:
           STABLE_VERSION: ${{ needs.job1.outputs.STABLE_VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
 

@@ -36,7 +36,10 @@ for channel in channels.keys():
     # iterate through workflow runs to collect all deployed channel versions
     for run in workflow_runs:
         editions = {}
-        version = full_version_pattern.findall(run['head_branch'])[0]
+        match_result = full_version_pattern.findall(run['head_branch'])
+        if (len(match_result) < 1):
+            continue
+        version = match_result[0]
         jobs = github.actions.list_jobs_for_workflow_run(run['id'])['jobs']
 
         # skip run if deploy was failed
@@ -60,7 +63,10 @@ for channel in channels.keys():
             channels[channel][version] = editions
         result = search_completion(channels[channel][version])
         if (result):
-            result_channels[channel] = major_version_pattern.findall(version)[0]
+            match_result = major_version_pattern.findall(version)
+            if (len(match_result) < 1):
+                continue
+            result_channels[channel] = match_result[0]
             break
 
 yamldata = '''\
@@ -81,5 +87,6 @@ groups:
 
 # print(yamldata)
 with open('ci/.helm/channels.yaml','w') as channels_file:
+# with open('channels.yaml','w') as channels_file:
     channels_file.write(yamldata)
     # yaml.dump(result_channels,channels_file)

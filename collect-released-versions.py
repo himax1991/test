@@ -8,9 +8,13 @@ full_version_pattern = re.compile(r"\d+\.\d+(?:.\d+)?")
 major_version_pattern = re.compile(r"\d+\.\d+")
 
 gh_token=os.getenv('GITHUB_TOKEN')
+gh_env_repo = os.getenv('GITHUB_REPOSITORY')
+gh_owner = gh_env_repo.split('/')[0]
+gh_repo= gh_env_repo.split('/')[1]
 
 github = GhApi(owner='deckhouse', repo='deckhouse', token=gh_token)
 
+stable_version = None
 editions_reference = [ 'BE', 'CE', 'EE', 'FE', 'SE', 'SE-plus' ]
 channels = {
     'alpha': None,
@@ -66,6 +70,7 @@ for channel in channels.keys():
             match_result = major_version_pattern.findall(version)
             if (len(match_result) < 1):
                 continue
+            stable_version = f'v{version}'
             result_channels[channel] = match_result[0]
             break
 
@@ -85,8 +90,16 @@ groups:
       version: {rock-solid}
 '''.format(**result_channels)
 
-# print(yamldata)
+print(yamldata)
 with open('ci/.helm/channels.yaml','w') as channels_file:
 # with open('channels.yaml','w') as channels_file:
     channels_file.write(yamldata)
     # yaml.dump(result_channels,channels_file)
+
+with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
+    output.write(f'stable_version={stable_version}')
+
+# github = GhApi(owner='himax1991', repo='test', token=gh_token)
+# release = github.repos.get_release_by_tag(owner=gh_owner, repo=gh_repo, tag=stable_version)
+
+# print(f'Release "{release['name']}" will be set as latest')

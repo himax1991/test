@@ -84,7 +84,8 @@ def collect_released_versions():
                 match_result = major_version_pattern.findall(version)
                 if (len(match_result) < 1):
                     continue
-                stable_version = f'v{version}'
+                if ( channel == 'stable'):
+                  stable_version = f'v{version}'
                 result_channels[channel] = match_result[0]
                 break
     yamldata = '''\
@@ -126,7 +127,7 @@ def determine_clusters_needs_deploy ():
         exit(1)
 
     v1 = client.CoreV1Api()
-    print("Get configmap \"{CM_NAME}\"")
+    print(f'Get configmap "{CM_NAME}"')
     try:
         cm = v1.read_namespaced_config_map(CM_NAME,CM_NAMESPACE)
     except:

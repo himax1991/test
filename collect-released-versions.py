@@ -138,9 +138,9 @@ def determine_clusters_needs_deploy ():
         exit(1)
         
     if (yamldata == cm.data['channels.yaml']):
-        write_output('dev_deploy',True)
+        write_output('dev_deploy','true')
     else:
-        write_output('dev_deploy',False)
+        write_output('dev_deploy','false')
 
 if __name__ == "__main__":
     try:

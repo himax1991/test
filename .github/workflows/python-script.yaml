@@ -73,7 +73,7 @@ jobs:
           include-hidden-files: true
 
   job2:
-    if: ${{ needs.job1.outputs.DEV_DEPLOY == true }}
+    if: ${{ needs.job1.outputs.DEV_DEPLOY == 'true' }}
     name: Deploy channel releases
     runs-on: ubuntu-latest
     needs: job1

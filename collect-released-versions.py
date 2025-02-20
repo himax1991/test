@@ -14,7 +14,22 @@ ENV_KUBECONFIG64 = 'WERF_KUBECONFIG_BASE64'
 CM_NAME = 'release-channels-data'
 CM_NAMESPACE = 'deckhouse-web-dev'
 
-yamldata = ''
+yamldata = '''\
+groups:
+- name: "v1"
+  channels:
+    - name: alpha
+      version: {alpha}
+    - name: beta
+      version: {beta}
+    - name: ea
+      version: {early-access}
+    - name: stable
+      version: {stable}
+    - name: rock-solid
+      version: {rock-solid}
+'''
+result_channels = {}
 
 def write_output(var,value):
     with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
@@ -41,7 +56,6 @@ def collect_released_versions():
         'stable': None,
         'rock-solid': None
     }
-    result_channels = {}
 
     def search_completion(editions):
         if (editions_reference != sorted(list(editions.keys()))):
@@ -92,26 +106,12 @@ def collect_released_versions():
                   stable_version = f'v{version}'
                 result_channels[channel] = match_result[0]
                 break
-    yamldata = '''\
-    groups:
-    - name: "v1"
-      channels:
-        - name: alpha
-          version: {alpha}
-        - name: beta
-          version: {beta}
-        - name: ea
-          version: {early-access}
-        - name: stable
-          version: {stable}
-        - name: rock-solid
-          version: {rock-solid}
-    '''.format(**result_channels)
+    data = yamldata.format(**result_channels)
 
-    print(yamldata)
+    print(data)
     with open('ci/.helm/channels.yaml','w') as channels_file:
     # with open('channels.yaml','w') as channels_file:
-        channels_file.write(yamldata)
+        channels_file.write(data)
         # yaml.dump(result_channels,channels_file)
 
     write_output('stable_version',stable_version)
@@ -136,16 +136,12 @@ def determine_clusters_needs_deploy ():
     except:
         print(f'Unable to get configmap: {CM_NAME}')
         exit(1)
-        
-    if (yamldata == cm.data['channels.yaml']):
+    data = yamldata.format(**result_channels)
+    if (data != cm.data['channels.yaml']):
         write_output('dev_deploy','true')
     else:
         write_output('dev_deploy','false')
 
 if __name__ == "__main__":
-    try:
-        collect_released_versions()
-        determine_clusters_needs_deploy()
-    except Exception as ex:
-        print(ex)
-        exit(1)
+    collect_released_versions()
+    determine_clusters_needs_deploy()

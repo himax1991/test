@@ -16,6 +16,10 @@ CM_NAMESPACE = 'deckhouse-web-dev'
 
 yamldata = ''
 
+def write_output(var,value):
+    with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
+        output.write(f'{var}={value}\n')
+
 def collect_released_versions():
 
     full_version_pattern = re.compile(r"\d+\.\d+(?:.\d+)?")
@@ -110,8 +114,7 @@ def collect_released_versions():
         channels_file.write(yamldata)
         # yaml.dump(result_channels,channels_file)
 
-    with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
-        output.write(f'stable_version={stable_version}\n')
+    write_output('stable_version',stable_version)
 
 def determine_clusters_needs_deploy ():
     kubeconf64 = os.getenv(ENV_KUBECONFIG64)
@@ -135,11 +138,9 @@ def determine_clusters_needs_deploy ():
         exit(1)
         
     if (yamldata == cm.data['channels.yaml']):
-        with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
-            output.write(f'dev_deploy=true\n')
+        write_output('dev_deploy',True)
     else:
-        with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
-            output.write(f'dev_deploy=false\n')
+        write_output('dev_deploy',False)
 
 if __name__ == "__main__":
     try:

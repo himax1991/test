@@ -71,7 +71,10 @@ jobs:
           name: channels-artifact
           path: ci
           include-hidden-files: true
-
+      - name: Check outputs
+        run: |
+          echo "${{ steps.channel-collector.outputs.stable_version }}"
+          echo "${{ steps.channel-collector.outputs.dev_deploy }}"
   job2:
     if: ${{ needs.job1.outputs.DEV_DEPLOY == 'true' }}
     name: Deploy channel releases

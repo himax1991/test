@@ -7,8 +7,13 @@ from kubernetes import client, config
 import yaml
 import base64
 
-GITHUB_TOKEN = 'GITHUB_TOKEN'
-GITHUB_REPOSITORY = 'GITHUB_REPOSITORY'
+GITHUB_TOKEN=os.getenv('GITHUB_TOKEN')
+if (GITHUB_TOKEN == None):
+    print("GITHUB_TOKEN was not found. Set env variable. Terminated.")
+    exit(1)
+
+GITHUB_ENV_REPO = os.getenv('GITHUB_REPOSITORY')
+GITHUB_OWNER, GITHUB_REPO = os.getenv('GITHUB_REPOSITORY').split('/')
 
 ENV_KUBECONFIG64 = 'WERF_KUBECONFIG_BASE64'
 CM_NAME = 'release-channels-data'
@@ -30,24 +35,19 @@ groups:
       version: {rock-solid}
 '''
 result_channels = {}
+stable_version = None
 
 def write_output(var,value):
     with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
         output.write(f'{var}={value}\n')
 
 def collect_released_versions():
-
+    global stable_version
     full_version_pattern = re.compile(r"\d+\.\d+(?:.\d+)?")
     major_version_pattern = re.compile(r"\d+\.\d+")
 
-    gh_token=os.getenv(GITHUB_TOKEN)
-    gh_env_repo = os.getenv(GITHUB_REPOSITORY)
-    gh_owner = gh_env_repo.split('/')[0]
-    gh_repo= gh_env_repo.split('/')[1]
+    github = GhApi(owner='deckhouse', repo='deckhouse', token=GITHUB_TOKEN)
 
-    github = GhApi(owner='deckhouse', repo='deckhouse', token=gh_token)
-
-    stable_version = None
     editions_reference = [ 'BE', 'CE', 'EE', 'FE', 'SE', 'SE-plus' ]
     channels = {
         'alpha': None,
@@ -116,7 +116,7 @@ def collect_released_versions():
 
     write_output('stable_version',stable_version)
 
-def determine_clusters_needs_deploy ():
+def determine_clusters_need_deploy ():
     kubeconf64 = os.getenv(ENV_KUBECONFIG64)
     if (kubeconf64 == None):
         print(f'Unable to load "{ENV_KUBECONFIG64}". Exit')
@@ -142,6 +142,12 @@ def determine_clusters_needs_deploy ():
     else:
         write_output('dev_deploy','false')
 
+def determine_release_id():
+    github = GhApi(owner='himax1991', repo='test', token=GITHUB_TOKEN)
+    write_output('target_release_id',github.repos.get_release_by_tag(tag=stable_version)['id'])
+    write_output('latest_release_id',github.repos.get_latest_release()['id'])
+
 if __name__ == "__main__":
     collect_released_versions()
-    determine_clusters_needs_deploy()
+    determine_clusters_need_deploy()
+    determine_release_id()

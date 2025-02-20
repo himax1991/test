@@ -19,6 +19,8 @@ jobs:
     outputs:
       STABLE_VERSION: ${{ steps.channel-collector.outputs.stable_version }}
       DEV_DEPLOY: ${{ steps.channel-collector.outputs.dev_deploy }}
+      LATEST_RELEASE_ID: ${{ steps.channel-collector.outputs.latest_release_id }}
+      TARGET_RELEASE_ID: ${{ steps.channel-collector.outputs.target_release_id }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -108,7 +110,7 @@ jobs:
           WERF_DIR: "channel-releases"
           WERF_DEV: "true"
   job3:
-    if: ${{ github.ref_name == needs.job1.outputs.STABLE_VERSION }}
+    if: ${{ (github.ref_name == needs.job1.outputs.STABLE_VERSION) && (needs.job1.outputs.TARGET_RELEASE_ID != needs.job1.outputs.LATEST_RELEASE_ID) }}
     name: Update 
     runs-on: ubuntu-latest
     needs: job1
@@ -119,6 +121,7 @@ jobs:
       - name: Make latest stable release
         env:
           STABLE_VERSION: ${{ needs.job1.outputs.STABLE_VERSION }}
+          TARGET_RELEASE_ID: ${{ needs.job1.outputs.TARGET_RELEASE_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
@@ -128,28 +131,7 @@ jobs:
           owner="${GITHUB_REPOSITORY%/*}"
           repo="${GITHUB_REPOSITORY#*/}"
 
-          release_by_tag="${url}/repos/${GITHUB_REPOSITORY}/releases/tags/${STABLE_VERSION}"
-
-          echo "${owner}"
-          echo "${repo}"
-          # echo $release_by_tag
-          response=$(curl -s -w "\n%{http_code}" -X GET ${release_by_tag} \
-              -H "Authorization: Bearer ${GITHUB_TOKEN}") || exit $?
-
-          response_code=$(echo "$response" | tail -n1)
-
-          if [[ $response_code != '200' ]]; then
-              echo -e "\e[31mERROR: Unable to determinate release id by tag!\e[0m"
-              echo -e "\e[31mURL: ${release_by_tag}!\e[0m"
-              echo -e "\e[31mResponse code: ${response_code}!\e[0m"
-              exit 1
-          fi
-
-          release_id=$(echo "$response" | sed  '$d' | jq ".id")
-          release_name=$(echo "$response" | sed  '$d' | jq ".name")
-          echo $release_id
-
-          update_release="${url}/repos/${GITHUB_REPOSITORY}/releases/${release_id}"
+          update_release="${url}/repos/${GITHUB_REPOSITORY}/releases/${TARGET_RELEASE_ID}"
 
           response=$(curl -s -w "\n%{http_code}" -X PATCH ${update_release} \
               -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -158,10 +140,10 @@ jobs:
           response_code=$(echo "$response" | tail -n1)
 
           if [[ $response_code != '200' ]]; then
-              echo -e "\e[31mERROR: Unable to update release ${release_name}!\e[0m"
+              echo -e "\e[31mERROR: Unable to update release ${TARGET_RELEASE_ID}!\e[0m"
               echo -e "\e[31mURL: ${update_release}!\e[0m"
               echo -e "\e[31mResponse code: ${response_code}!\e[0m"
               exit 1
           fi
 
-          echo -e "\e[32mRelease ${release_name} has been successfully marked as latest."
+          echo -e "\e[32mRelease ${TARGET_RELEASE_ID} has been successfully marked as latest."

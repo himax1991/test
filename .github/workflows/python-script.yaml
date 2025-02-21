@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       STABLE_VERSION: ${{ steps.channel-collector.outputs.stable_version }}
-      DEV_DEPLOY: ${{ steps.channel-collector.outputs.dev_deploy }}
+      DEPLOY_KUBECONFIG_BASE64_DEV: ${{ steps.channel-collector.outputs.DEPLOY_KUBECONFIG_BASE64_DEV }}
       LATEST_RELEASE_ID: ${{ steps.channel-collector.outputs.latest_release_id }}
       TARGET_RELEASE_ID: ${{ steps.channel-collector.outputs.target_release_id }}
     steps:
@@ -64,7 +64,7 @@ jobs:
         id: channel-collector
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WERF_KUBECONFIG_BASE64: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
+          KUBECONFIG_BASE64_DEV: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
         run: python collect-released-versions.py
 
       - name: Upload artifacts
@@ -78,7 +78,7 @@ jobs:
           echo "${{ steps.channel-collector.outputs.stable_version }}"
           echo "${{ steps.channel-collector.outputs.dev_deploy }}"
   job2:
-    if: ${{ needs.job1.outputs.DEV_DEPLOY == 'true' }}
+    if: ${{ needs.job1.outputs.DEPLOY_KUBECONFIG_BASE64_DEV == 'true' }}
     name: Deploy channel releases
     runs-on: ubuntu-latest
     needs: job1

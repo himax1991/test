@@ -9,13 +9,12 @@ import base64
 
 GITHUB_TOKEN=os.getenv('GITHUB_TOKEN')
 if (GITHUB_TOKEN == None):
-    print("GITHUB_TOKEN was not found. Set env variable. Terminated.")
+    print("GITHUB_TOKEN env variable was not found. Terminated.")
     exit(1)
 
-GITHUB_ENV_REPO = os.getenv('GITHUB_REPOSITORY')
 GITHUB_OWNER, GITHUB_REPO = os.getenv('GITHUB_REPOSITORY').split('/')
 
-ENV_KUBECONFIG64 = 'WERF_KUBECONFIG_BASE64'
+KUBECONF_NAME_PREFIX = 'KUBECONFIG_BASE64_'
 CM_NAME = 'release-channels-data'
 CM_NAMESPACE = 'deckhouse-web-dev'
 
@@ -116,18 +115,11 @@ def collect_released_versions():
 
     write_output('stable_version',stable_version)
 
-def determine_clusters_need_deploy ():
-    kubeconf64 = os.getenv(ENV_KUBECONFIG64)
-    if (kubeconf64 == None):
-        print(f'Unable to load "{ENV_KUBECONFIG64}". Exit')
-        exit(1)
+def determine_clusters_need_deploy (kubeconf_name,kubeconf64):
+    output_prefix = 'DEPLOY_'
 
-    try:
-        kubeconf = yaml.safe_load(base64.b64decode(kubeconf64).decode('utf-8'))
-        config.load_kube_config_from_dict(kubeconf)
-    except Exception as e:
-        print(f'Unable to read KUBECONFIG: {ENV_KUBECONFIG64}')
-        exit(1)
+    kubeconf = yaml.safe_load(base64.b64decode(kubeconf64).decode('utf-8'))
+    config.load_kube_config_from_dict(kubeconf)
 
     v1 = client.CoreV1Api()
     print(f'Get configmap "{CM_NAME}"')
@@ -138,9 +130,9 @@ def determine_clusters_need_deploy ():
         exit(1)
     data = yamldata.format(**result_channels)
     if (data != cm.data['channels.yaml']):
-        write_output('dev_deploy','true')
+        write_output(output_prefix+kubeconf_name,'true')
     else:
-        write_output('dev_deploy','false')
+        write_output(output_prefix+kubeconf_name,'false')
 
 def determine_release_id():
     github = GhApi(owner='himax1991', repo='test', token=GITHUB_TOKEN)
@@ -149,5 +141,12 @@ def determine_release_id():
 
 if __name__ == "__main__":
     collect_released_versions()
-    determine_clusters_need_deploy()
+
+    kubecfgs = {}
+    for key,value in os.environ.items():
+        if key.startswith(KUBECONF_NAME_PREFIX):
+            kubecfgs |= {key:value}
+    for names in kubecfgs.keys():
+      determine_clusters_need_deploy()
+
     determine_release_id()

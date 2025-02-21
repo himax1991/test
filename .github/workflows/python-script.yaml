@@ -126,7 +126,7 @@ jobs:
         run: |
           set -e
 
-          url="https://api.github.com"
+          url="${GITHUB_API_URL}"
 
           owner="${GITHUB_REPOSITORY%/*}"
           repo="${GITHUB_REPOSITORY#*/}"

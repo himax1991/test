@@ -6,7 +6,7 @@ import re
 from kubernetes import client, config
 import yaml
 import base64
-import sys
+import inspect
 
 GITHUB_TOKEN=os.getenv('GITHUB_TOKEN')
 if (GITHUB_TOKEN == None):
@@ -122,7 +122,7 @@ def determine_clusters_need_deploy (kubeconf_name,kubeconf64):
         kubeconf = yaml.safe_load(base64.b64decode(kubeconf64).decode('utf-8'))
         config.load_kube_config_from_dict(kubeconf)
     except:
-        print(f'::warning file=scripts/{os.path.basename(__file__)},::Unable to load "{kubeconf_name}". Cluster {kubeconf_name} will be skipped.')
+        print(f'::warning file=scripts/{os.path.basename(__file__)},line={inspect.currentframe().f_lineno},title=Check existing configmap::Unable to load "{kubeconf_name}". Cluster {kubeconf_name} will be skipped.')
         # print(f'Unable to load "{kubeconf_name}". Cluster {kubeconf_name} will be skipped."')
         write_output(output_prefix+kubeconf_name,'false')
         return

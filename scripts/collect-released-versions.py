@@ -16,7 +16,6 @@ GITHUB_OWNER, GITHUB_REPO = os.getenv('GITHUB_REPOSITORY').split('/')
 
 KUBECONF_NAME_PREFIX = 'KUBECONFIG_BASE64_'
 CM_NAME = 'release-channels-data'
-CM_NAMESPACE = 'deckhouse-web-dev'
 
 yamldata = '''\
 groups:
@@ -121,11 +120,13 @@ def determine_clusters_need_deploy (kubeconf_name,kubeconf64):
     kubeconf = yaml.safe_load(base64.b64decode(kubeconf64).decode('utf-8'))
     config.load_kube_config_from_dict(kubeconf)
 
+    namespace = os.getenv(f'NAMESPACE_{kubeconf_name}')
+
     v1 = client.CoreV1Api()
     try:
-        cm = v1.read_namespaced_config_map(CM_NAME,CM_NAMESPACE)
+        cm = v1.read_namespaced_config_map(CM_NAME,namespace)
     except:
-        print(f'Unable to get configmap: {CM_NAME}')
+        print(f'Unable to get configmap: "{CM_NAME}" in namespace "{namespace}"')
         exit(1)
     data = yamldata.format(**result_channels)
     if (data != cm.data['channels.yaml']):

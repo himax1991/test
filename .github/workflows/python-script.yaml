@@ -65,6 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           KUBECONFIG_BASE64_DEV: "${{ secrets.WERF_KUBECONFIG_BASE64 }}"
+          NAMESPACE_KUBECONFIG_BASE64_DEV: "deckhouse-web-dev"
         run: python scripts/collect-released-versions.py
 
       - name: Upload artifacts

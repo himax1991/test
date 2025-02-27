@@ -148,3 +148,4 @@ jobs:
           fi
 
           echo -e "\e[32mRelease ${TARGET_RELEASE_ID} has been successfully marked as latest."
+          

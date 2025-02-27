@@ -132,8 +132,8 @@ def determine_clusters_need_deploy (kubeconf_name,kubeconf64):
     v1 = client.CoreV1Api()
     try:
         cm = v1.read_namespaced_config_map(CM_NAME,namespace)
-    except:
-        print(f'Unable to get configmap "{CM_NAME}" in namespace "{namespace}. Cluster {kubeconf_name} will be skipped."')
+    except Exception as e:
+        print(f'Unable to get configmap "{CM_NAME}" in namespace "{namespace}. Cluster {kubeconf_name} will be skipped.\nError: {e}"')
         write_output(output_prefix+kubeconf_name,'false')
         return
     data = yamldata.format(**result_channels)

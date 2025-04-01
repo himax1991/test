@@ -2,32 +2,38 @@ name: Step output
 
 on:
   workflow_dispatch:
-  push:    
+  push:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - labeled
+      - synchronize
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - name: set output
-        id: set-output
-        shell: bash
-        run: |
-          env
-          echo "greeting_message=Hello world!" >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
+      # - name: set output
+      #   id: set-output
+      #   shell: bash
+      #   run: |
+      #     env
+      #     echo "greeting_message=Hello world!" >> $GITHUB_OUTPUT
+      #     echo $GITHUB_OUTPUT
+      #     cat $GITHUB_OUTPUT
 
-      - name: get output
-        run: |
-          echo "${{ steps.set-output.outputs.greeting_message }}"
+      # - name: get output
+      #   run: |
+      #     echo "${{ steps.set-output.outputs.greeting_message }}"
           
-      - name: list envs
-        id: list_envs
-        run: env
+      # - name: list envs
+      #   id: list_envs
+      #   run: env
 
       - name: Check expressions
         env:
-          MY_VAR: ${{ env.MY_VAR || 'default value' }}
+          MY_VAR: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') && true || false }}
         run: |
           echo $MY_VAR
     

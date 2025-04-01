@@ -5,8 +5,13 @@ on:
   pull_request_target:
     types:
       - opened
+      - labeled
       - reopened
       - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   job1:

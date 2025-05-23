@@ -9,37 +9,55 @@ on:
   #     - reopened
   #     - synchronize
   pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  job1:
+  set_vars:
     runs-on: ubuntu-latest
+    name: Set TAGs
+    # outputs:
+    #   modules_module_tag: ${{ steps.modules_module_tag.outputs.MODULES_MODULE_TAG }}
+    #   module_edition: ${{ steps.modules_module_tag.outputs.MODULE_EDITION }}
+    #   runner_type: ${{ steps.modules_module_tag.outputs.RUNNER_TYPE }}
     steps:
-      # - name: set output
-      #   id: set-output
-      #   shell: bash
-      #   run: |
-      #     env
-      #     echo "greeting_message=Hello world!" >> $GITHUB_OUTPUT
-      #     echo $GITHUB_OUTPUT
-      #     cat $GITHUB_OUTPUT
+      # - name: Get Pull Request Labels
+      #   id: get-labels
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       if (context.eventName === "pull_request" || context.eventName === "pull_request_target" ) {
+      #         const prNumber = context.payload.pull_request.number;
+      #         const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           issue_number: prNumber,
+      #         });
+      #         return labels.map(label => label.name);
+      #       } else {
+      #         return [];
+      #       }
+      #     result-encoding: string
 
-      # - name: get output
-      #   run: |
-      #     echo "${{ steps.set-output.outputs.greeting_message }}"
-          
-      # - name: list envs
-      #   id: list_envs
-      #   run: env
-
-      # - name: Check expressions
-      #   env:
-      #     MY_VAR: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') && true || false }}
-      #   run: |
-      #     echo $MY_VAR
+      - name: Set vars
+        id: modules_module_tag
+        run: |
+          if [[ "${{ github.ref_name }}" == 'main' ]]; then
+            MODULES_MODULE_TAG="${{ github.ref_name }}"
+          elif [[ "${{ github.ref_name }}" =~ ^release-[0-9]+\.[0-9]+ ]]; then
+            MODULES_MODULE_TAG="${{ github.ref_name }}"
+          elif [[ -n "${{ github.event.pull_request.number }}" ]]; then
+            MODULES_MODULE_TAG="pr${{ github.event.pull_request.number }}"
+          elif [[ -n "${{ github.event.inputs.pr_number }}" ]]; then
+            MODULES_MODULE_TAG="pr${{ github.event.inputs.pr_number }}"
+          else
+            echo "::error title=Module image tag is required::Can't detect module tag from workflow context. Dev build uses branch name as tag for main and release branches, and PR number for builds from pull requests. Check workflow for correctness."
+            exit 1
+          fi
 
       - name: Check expressions
         env:

@@ -10,7 +10,10 @@ on:
   #     - synchronize
   pull_request:
     types: [opened, reopened, synchronize, labeled, unlabeled]
-
+  push:
+    branches:
+      - main
+      - release-*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}

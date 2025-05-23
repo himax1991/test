@@ -2,12 +2,13 @@ name: Step output
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    types:
-      - opened
-      - labeled
-      - reopened
-      - synchronize
+  # pull_request_target:
+  #   types:
+  #     - opened
+  #     - labeled
+  #     - reopened
+  #     - synchronize
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -34,9 +35,15 @@ jobs:
       #   id: list_envs
       #   run: env
 
+      # - name: Check expressions
+      #   env:
+      #     MY_VAR: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') && true || false }}
+      #   run: |
+      #     echo $MY_VAR
+
       - name: Check expressions
         env:
-          MY_VAR: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') && true || false }}
+          MY_VAR: ${{ github.event.pull_request.number }}
         run: |
           echo $MY_VAR
     

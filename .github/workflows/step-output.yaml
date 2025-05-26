@@ -2,41 +2,31 @@ name: Step output
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    types:
-      - opened
-      - labeled
-      - reopened
-      - synchronize
+  # pull_request_target:
+  #   types:
+  #     - opened
+  #     - labeled
+  #     - reopened
+  #     - synchronize
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  push:
+    branches:
+      - main
+      - release-*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  job1:
+  test_job:
     runs-on: ubuntu-latest
+    name: test
     steps:
-      # - name: set output
-      #   id: set-output
-      #   shell: bash
-      #   run: |
-      #     env
-      #     echo "greeting_message=Hello world!" >> $GITHUB_OUTPUT
-      #     echo $GITHUB_OUTPUT
-      #     cat $GITHUB_OUTPUT
-
-      # - name: get output
-      #   run: |
-      #     echo "${{ steps.set-output.outputs.greeting_message }}"
-          
-      # - name: list envs
-      #   id: list_envs
-      #   run: env
-
       - name: Check expressions
         env:
-          MY_VAR: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') && true || false }}
+          MY_VAR: ${{ secrets.verySecret }}
         run: |
           echo $MY_VAR
     

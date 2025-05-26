@@ -30,6 +30,6 @@ jobs:
         run: |
           echo $MY_VAR
       - name: Condition step
-        if: ${{ secrets.verySecret != '' }}
+        if: secrets.verySecret != ''
         run: |
           echo "Secret not empty"

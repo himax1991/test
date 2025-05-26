@@ -31,6 +31,25 @@ jobs:
             ${{ secrets.secretValue }}
             ${{ secrets.SUPERSECRET }}    
 
+      - name: Add ssh_known_hosts
+        run: |
+          host="example-host.domain"
+
+          host_ip=$(nslookup "$host" | awk '/^Address: / { print $2 }')
+          echo "::add-mask::$host_ip"
+
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          HOST_KEYS=$(ssh-keyscan -H "$host" 2>/dev/null)
+          while IFS= read -r KEY_LINE; do
+              CONSTANT_PART=$(awk '{print $2, $3}' <<< "$KEY_LINE")
+              if grep -q "$CONSTANT_PART" ~/.ssh/known_hosts; then
+                  ssh-keygen -R $host
+                  ssh-keygen -R $host_ip
+              fi
+              echo "$KEY_LINE" >> ~/.ssh/known_hosts
+          done <<< "$HOST_KEYS"  
+
       - name: Check expressions
         env:
           MY_VAR: ${{ secrets.verySecret }}

@@ -29,4 +29,7 @@ jobs:
           MY_VAR: ${{ secrets.verySecret }}
         run: |
           echo $MY_VAR
-    
+      - name: Condition step
+        if: ${{ secrets.verySecret != "" }}
+        run: |
+          echo "Secret not empty"

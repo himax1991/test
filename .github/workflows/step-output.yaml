@@ -24,12 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     name: test
     steps:
+      - name: Add ssh-agent
+        uses: {!{ index (ds "actions") "ssh-agent" }!}
+        with:
+          ssh-private-key: |
+            ${{ secrets.secretValue }}
+            ${{ secrets.superSecret }}    
+
       - name: Check expressions
         env:
           MY_VAR: ${{ secrets.verySecret }}
         run: |
           echo $MY_VAR
-      - name: Condition step
-        if: secrets.verySecret != ''
-        run: |
-          echo "Secret not empty"
+

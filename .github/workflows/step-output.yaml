@@ -33,6 +33,7 @@ jobs:
 
       - name: Add ssh_known_hosts
         run: |
+          set +e
           host="example-host.domain"
 
           host_ip=$(nslookup "$host" | awk '/^Address: / { print $2 }')
@@ -49,6 +50,7 @@ jobs:
               fi
               echo "$KEY_LINE" >> ~/.ssh/known_hosts
           done <<< "$HOST_KEYS"  
+          set -e
 
       - name: Check expressions
         env:

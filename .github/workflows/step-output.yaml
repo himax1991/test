@@ -30,12 +30,14 @@ jobs:
     steps:
       - name: Test job
         run: |
-          echo "run dummy step"
+          echo "simulate error exit"
+          exit 1
 
   last_job:
     if: ${{ inputs.test_enabled == 'true' && always() }}
     runs-on: ubuntu-latest
     name: last job
+    needs: [test_job]
     steps:
       - name: last job
         run: |

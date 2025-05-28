@@ -30,8 +30,8 @@ jobs:
     steps:
       - name: Test job
         run: |
-          echo "simulate error exit"
-          exit 1
+          echo "successfull run"
+          exit 0
 
   last_job:
     if: ${{ inputs.test_enabled == 'true' && always() }}

@@ -2,6 +2,10 @@ name: Step output
 
 on:
   workflow_dispatch:
+    inputs:
+      test_enabled:
+        description: "enable lasy job"
+        required: false
   # pull_request_target:
   #   types:
   #     - opened
@@ -22,38 +26,18 @@ concurrency:
 jobs:
   test_job:
     runs-on: ubuntu-latest
-    name: test
+    name: Test job
     steps:
-      - name: Add ssh-agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.SUPERSECRET }}    
-            ${{ secrets.secretValue }}
-
-      - name: Add ssh_known_hosts
-        continue-on-error: true
+      - name: Test job
         run: |
-          host="example-host.domain"
+          echo "run dummy step"
 
-          host_ip=$(nslookup "$host" | awk '/^Address: / { print $2 }')
-          echo "::add-mask::$host_ip"
-
-          mkdir -p ~/.ssh
-          touch ~/.ssh/known_hosts
-          HOST_KEYS=$(ssh-keyscan -H "$host" 2>/dev/null)
-          while IFS= read -r KEY_LINE; do
-              CONSTANT_PART=$(awk '{print $2, $3}' <<< "$KEY_LINE")
-              if grep -q "$CONSTANT_PART" ~/.ssh/known_hosts; then
-                  ssh-keygen -R $host
-                  ssh-keygen -R $host_ip
-              fi
-              echo "$KEY_LINE" >> ~/.ssh/known_hosts
-          done <<< "$HOST_KEYS"  
-
-      - name: Check expressions
-        env:
-          MY_VAR: ${{ secrets.verySecret }}
+  last_job:
+    if: ${{ inputs.test_enabled == 'true' && always() }}
+    runs-on: ubuntu-latest
+    name: last job
+    steps:
+      - name: last job
         run: |
-          echo $MY_VAR
+          echo "hello after job"
 

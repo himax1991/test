@@ -16,8 +16,21 @@ jobs:
 
       - name: check
         run: |
+          echo "$GITHUB_OUTPUT
           cat "$GITHUB_OUTPUT"
 
+  set_js_output:
+    runs-on: ubuntu-latest
+    outputs:
+      js_var: ${{ steps.set_js_var.outputs.test_var }}
+
+    steps:
+      - name: Set js var
+        id: set_js_var
+        uses: actions/github-script@v6.4.1
+        with:
+          script: |
+            core.setOutput('js_test_var','present')
 
   print_output:
     runs-on: ubuntu-latest
@@ -26,3 +39,4 @@ jobs:
       - name: Print
         run: |
           echo "Output var: ${{ needs.set_output.outputs.var }}"
+          echo "JS output var: ${{ needs.set_output.outputs.js_var }}"

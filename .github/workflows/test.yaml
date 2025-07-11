@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       js_var: ${{ steps.set_js_var.outputs.js_test_var }}
+      build_be: ${{ steps.set_js_var.outputs.build_be }}
+      build_ee: ${{ steps.set_js_var.outputs.build_ee }}
 
     steps:
       - name: Set js var
@@ -31,6 +33,28 @@ jobs:
         with:
           script: |
             core.setOutput('js_test_var','present')
+            pr = {
+              "labels": [
+                {
+                  "id": "LA_kwDOG8B4p87n7s18",
+                  "name": "edition/ee",
+                  "description": "",
+                  "color": "53ABE0"
+                },
+                {
+                  "id": "LA_kwDOG8B4p87n7w18",
+                  "name": "edition/be",
+                  "description": "",
+                  "color": "53AFD0"
+                }
+              ]
+            }
+            const build_editions = pr.labels.map(l => l.name).filter(l => l.startsWith('edition/')).map(e => e.replace('edition/', 'build_')).map(e => e.replace('se+','se-plus'));
+            core.info(`${build_editions}`)
+            for (build_edition of build_editions) {
+              core.setOutput(`${build_edition}`, 'true');
+              core.info(`${build_edition}`)
+            }
 
   print_output:
     runs-on: ubuntu-latest
@@ -42,3 +66,5 @@ jobs:
         run: |
           echo "Output var: ${{ needs.set_output.outputs.var }}"
           echo "JS output var: ${{ needs.set_js_output.outputs.js_var }}"
+          echo "JS output var2: ${{ needs.set_js_output.outputs.build_be }}"
+          echo "JS output var3: ${{ needs.set_js_output.outputs.build_ee }}"

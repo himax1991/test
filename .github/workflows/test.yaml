@@ -16,13 +16,13 @@ jobs:
 
       - name: check
         run: |
-          echo "$GITHUB_OUTPUT
+          echo "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
 
   set_js_output:
     runs-on: ubuntu-latest
     outputs:
-      js_var: ${{ steps.set_js_var.outputs.test_var }}
+      js_var: ${{ steps.set_js_var.outputs.js_test_var }}
 
     steps:
       - name: Set js var
@@ -34,9 +34,11 @@ jobs:
 
   print_output:
     runs-on: ubuntu-latest
-    needs: set_output
+    needs:
+      - set_output
+      - set_js_output
     steps:
       - name: Print
         run: |
           echo "Output var: ${{ needs.set_output.outputs.var }}"
-          echo "JS output var: ${{ needs.set_output.outputs.js_var }}"
+          echo "JS output var: ${{ needs.set_js_output.outputs.js_var }}"

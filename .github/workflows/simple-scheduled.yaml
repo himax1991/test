@@ -4,11 +4,6 @@ on:
   schedule:
     - cron: "49 14 * * 2"
   workflow_dispatch:
-    inputs:
-      svace_enabled:
-        description: 'Enable svace build and analyze'
-        type: boolean
-        required: false
 
 jobs:
   test-job:

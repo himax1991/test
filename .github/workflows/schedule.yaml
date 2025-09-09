@@ -17,4 +17,4 @@ jobs:
     uses: ./.github/workflows/build_dev.yaml
     secrets: inherit
     with:
-      svace_enabled: ${{ github.event.inputs.svace_enabled || github.event.schedule }}
+      svace_enabled: ${{ github.event.inputs.svace_enabled }}

@@ -1,0 +1,20 @@
+name: Build and push for dev
+
+on:
+  workflow_call:
+    inputs:
+      svace_enabled:
+        description: "Enable svace build and analyze"
+        type: boolean
+        required: false
+
+jobs:
+  dev_build:
+    runs-on: ubuntu-latest
+    name: Dev build
+    steps:
+      - name: build
+        env:
+          SVACE_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') || github.event.inputs.svace_enabled }}
+        run: |
+          echo "Svace enabled: $SVACE_ENABLED"

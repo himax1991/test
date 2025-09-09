@@ -1,0 +1,14 @@
+name: Schedule checks
+
+on:
+  schedule:
+    - cron: "0 01 * * 0,3" # Regular CVE scan
+    - cron: "0 15 * * 6" # Regular static analysis
+
+jobs:
+  build_dev:
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * 6'
+    uses: ./.github/workflows/build_dev.yaml
+    secrets: inherit
+    with:
+      svace_enabled: ${{ (github.event.inputs.svace_enabled || github.event.schedule) && true || false }}

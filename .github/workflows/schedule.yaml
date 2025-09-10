@@ -3,7 +3,7 @@ name: Schedule checks
 on:
   schedule:
     - cron: "25 07 * * 3" # Regular CVE scan
-    - cron: "20 08 * * 3" # Regular static analysis
+    - cron: "59 08 * * 3" # Regular static analysis
   workflow_dispatch:
     inputs:
       svace_enabled:
@@ -13,11 +13,11 @@ on:
 
 jobs:
   build_dev:
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.schedule == '20 08 * * 3'
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.schedule == '59 08 * * 3'
     uses: ./.github/workflows/build_dev.yaml
     secrets: inherit
     with:
-      svace_enabled: true
+      svace_enabled: ${{ inputs.svace_enabled == 'true' || github.event_name == 'schedule' }}
 
   info:
     runs-on: ubuntu-latest

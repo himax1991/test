@@ -15,6 +15,6 @@ jobs:
     steps:
       - name: build
         env:
-          SVACE_ENABLED: "${{ contains(github.event.pull_request.labels.*.name, 'analyze/svace') || github.event.inputs.svace_enabled }}"
+          SVACE_ENABLED: "${{ inputs.svace_enabled }}"
         run: |
           echo "Svace enabled: $SVACE_ENABLED"

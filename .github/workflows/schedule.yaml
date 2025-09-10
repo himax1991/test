@@ -3,7 +3,7 @@ name: Schedule checks
 on:
   schedule:
     - cron: "25 07 * * 3" # Regular CVE scan
-    - cron: "15 07 * * 3" # Regular static analysis
+    - cron: "50 07 * * 3" # Regular static analysis
   workflow_dispatch:
     inputs:
       svace_enabled:

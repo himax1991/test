@@ -18,3 +18,13 @@ jobs:
     secrets: inherit
     with:
       svace_enabled: ${{ github.event.inputs.svace_enabled == true || github.event_name == 'schedule' }}
+
+  info:
+    runs-on: ubuntu-latest
+    name: Info
+    steps:
+      - name: info
+        env:
+          SVACE_ENABLED: ${{ inputs.svace_enabled }}
+        run: |
+          echo "Svace enabled: $SVACE_ENABLED"

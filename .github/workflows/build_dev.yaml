@@ -15,6 +15,6 @@ jobs:
     steps:
       - name: build
         env:
-          SVACE_ENABLED: ${{ inputs.svace_enabled == 'true' }}
+          SVACE_ENABLED: ${{ github.events.inputs.svace_enabled == 'true' }}
         run: |
           echo "Svace enabled: $SVACE_ENABLED"
